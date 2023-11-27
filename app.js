@@ -2,14 +2,20 @@ const express = require("express");
 //import express from 'express'; 랑 똑같음
 // 실행은 node app.js
 const todosRouter = require("./routes/todos");
+const cors = require("cors");
 
 const app = express();
 // 위는 익스프레스 컨벤션임 필수는 아님
 
 const port = 3010;
 
+app.use(cors());
+// 프론트랑 백이랑 요청하는로컬주소가 달라서 오류남
+// npm i cors를 해서 cors를 설정해서 달라도 괜찮다는 것을 명시하자
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// 상대방이 보낸 제이슨을 받기 위함
 // 요것이 바디파서
 app.use("/todos", todosRouter);
 // todos 로 왔을때 todosRouter로 보내겠다.

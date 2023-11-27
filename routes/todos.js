@@ -31,7 +31,89 @@ router.post("/", (req, res) => {
 
   return res.json({ todo: newTodo });
   //   postman에서 응답 하면 터미널에 undefined라고 뜸
-  // 제이슨이라 그런거임 json통력 하려면 파디파서 해주면됨
+  // 제이슨이라 그런거임 json통력 하려면 바디파서 해주면됨
+});
+// post요청은 postman에서...
+router.get("/", (req, res) => {
+  return res.json({ todos });
+});
+// get요청은 브라우저로도 확인가능
+
+router.get("/:todoId", (req, res) => {
+  const { todoId } = req.params;
+  //   구조분해
+  //   params를 통해 데이터를 가져온것
+  if (isNaN(todoId)) {
+    return res.status(400).json({
+      message: "todoId is not a number",
+    });
+  }
+  // isNaN 문자면 true 숫자면 false
+
+  let existTodo;
+
+  todos.map((v, i) => {
+    if (v.id === +todoId) {
+      // +는 형변환
+      existTodo = v;
+    }
+  });
+
+  if (!existTodo) {
+    return res.status(400).json({
+      message: "Not exist todo.",
+    });
+  }
+
+  return res.json({ todo: existTodo });
+});
+
+router.put("/:todoId", (req, res) => {
+  const { todoId } = req.params;
+  const { title } = req.body;
+
+  if (isNaN(todoId) || !title) {
+    return res.status(400).json({
+      message: "Not exist data.",
+    });
+  }
+
+  let updateTodo;
+
+  todos = todos.map((v) => {
+    if (v.id === +todoId) {
+      updateTodo = { id: v.id, title, isDone: v.isDone };
+      //   타이틀만 수정 나머지는 그대로라 v.~~로 입력하면됨
+
+      return updateTodo;
+    } else {
+      return v;
+    }
+  });
+
+  console.log(todos);
+
+  return res.json({ todo: updateTodo });
+});
+
+router.delete("/:todoId", (req, res) => {
+  const { todoId } = req.params;
+
+  if (isNaN(todoId)) {
+    return res.status(400).json({
+      message: "Not exist data.",
+    });
+  }
+  todos = todos.filter((v) => {
+    if (v.id !== +todoId) {
+      return v;
+    }
+  });
+
+  console.log(todos);
+  return res.json({ message: "Deleted todo." });
 });
 
 module.exports = router;
+
+// https://to-do-list-backend-8fd2514d2a96.herokuapp.com/api#/ 여기링크 한거//
