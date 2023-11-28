@@ -70,36 +70,6 @@ router.get("/:todoId", (req, res) => {
   return res.json({ todo: existTodo });
 });
 
-router.put("/:todoId/done", (req, res) => {
-  const { todoId } = req.params;
-
-  if (isNaN(todoId)) {
-    return res.status(400).json({
-      message: "todoId is not a number.",
-    });
-  }
-
-  let updateTodo;
-
-  todos = todos.map((v) => {
-    if (v.id === +todoId) {
-      updateTodo = { id: v.id, title: v.title, isDone: !v.isDone };
-
-      return updateTodo;
-    } else {
-      return v;
-    }
-  });
-
-  if (!updateTodo) {
-    return res.status(400).json({
-      message: "Not exist todo.",
-    });
-  }
-
-  return res.json({ todo: updateTodo });
-});
-
 router.put("/:todoId", (req, res) => {
   const { todoId } = req.params;
   const { title } = req.body;
