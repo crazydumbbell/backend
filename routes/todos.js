@@ -4,7 +4,7 @@ const router = express.Router();
 // 익스프레스 안의 "라우터"를 몽땅 가져오자
 
 let todoId = 1;
-let todos = [{ od: 1, title: "청소", isDone: false }];
+let todos = [{ id: 1, title: "청소", isDone: false }];
 
 router.post("/", (req, res) => {
   const { title } = req.body;
@@ -32,6 +32,8 @@ router.post("/", (req, res) => {
   return res.json({ todo: newTodo });
   //   postman에서 응답 하면 터미널에 undefined라고 뜸
   // 제이슨이라 그런거임 json통력 하려면 바디파서 해주면됨
+
+  // 암튼 만든 todo를 던져준다! ==> 슬라이스에서 받아서 쓴다!
 });
 // post요청은 postman에서...
 router.get("/", (req, res) => {
@@ -52,7 +54,7 @@ router.get("/:todoId", (req, res) => {
 
   let existTodo;
 
-  todos.map((v, i) => {
+  todos.map((v) => {
     if (v.id === +todoId) {
       // +는 형변환
       existTodo = v;
@@ -66,6 +68,36 @@ router.get("/:todoId", (req, res) => {
   }
 
   return res.json({ todo: existTodo });
+});
+
+router.put("/:todoId/done", (req, res) => {
+  const { todoId } = req.params;
+
+  if (isNaN(todoId)) {
+    return res.status(400).json({
+      message: "todoId is not a number.",
+    });
+  }
+
+  let updateTodo;
+
+  todos = todos.map((v) => {
+    if (v.id === +todoId) {
+      updateTodo = { id: v.id, title: v.title, isDone: !v.isDone };
+
+      return updateTodo;
+    } else {
+      return v;
+    }
+  });
+
+  if (!updateTodo) {
+    return res.status(400).json({
+      message: "Not exist todo.",
+    });
+  }
+
+  return res.json({ todo: updateTodo });
 });
 
 router.put("/:todoId", (req, res) => {
@@ -94,6 +126,7 @@ router.put("/:todoId", (req, res) => {
   console.log(todos);
 
   return res.json({ todo: updateTodo });
+  // 여기서 todo로 보내는것은 불필요한 데이터를 네트워크에 태우게됨(비효율적)
 });
 
 router.delete("/:todoId", (req, res) => {
